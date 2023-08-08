@@ -26,6 +26,14 @@ const data = {
         html_element: "number",
       },
       {
+        name: "number",
+        label: "Number",
+        required: true,
+        data_type: "Integer",
+        html_element: "number",
+      },
+      
+      {
         name: "role",
         label: "Role",
         required: true,
@@ -71,7 +79,7 @@ function Form() {
         errors[inputData.name] = `${inputData.label} is required`;
       }
 
-      if (inputData.data_type === "Integer") {
+      if (inputData.name === "age") {
         const numValue = parseInt(value, 10);
 
         if (isNaN(numValue)) {
