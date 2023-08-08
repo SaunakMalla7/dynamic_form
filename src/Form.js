@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './App.css';
+import "./App.css";
 
 const data = {
   form: {
@@ -32,7 +32,7 @@ const data = {
         data_type: "Integer",
         html_element: "number",
       },
-      
+
       {
         name: "role",
         label: "Role",
@@ -55,12 +55,9 @@ const data = {
   },
 };
 
-
-
 function Form() {
   const [formData, setFormData] = useState({});
   const [formErrors, setFormErrors] = useState({});
-  
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -69,14 +66,23 @@ function Form() {
     setFormData((prevData) => ({ ...prevData, [name]: fieldValue }));
   };
 
-  const validateForm = () => {
-    const errors = {};
+  const handleBlur = (fieldName, value) => {
+    validateField(fieldName, value);
+  };
 
-    data.form.fields.forEach((inputData) => {
-      const value = formData[inputData.name];
+  // validation for Form
+  const validateField = (fieldName, value) => {
+    const errors = { ...formErrors };
 
+    const inputData = data.form.fields.find(
+      (field) => field.name === fieldName
+    );
+
+    if (inputData) {
       if (inputData.required && !value) {
         errors[inputData.name] = `${inputData.label} is required`;
+      } else {
+        errors[inputData.name] = undefined; 
       }
 
       if (inputData.name === "age") {
@@ -94,64 +100,77 @@ function Form() {
           }
         }
       }
-    });
+    }
 
     setFormErrors(errors);
-    return Object.keys(errors).length === 0;
   };
 
+  // For Submit
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (validateForm()) {
+    if (validateForm() && formData.age >= 18) {
       console.log("Submitted Data:", formData);
     } else {
-      console.log("Form contains errors");
+      console.log("Form contains errors ");
     }
   };
 
+  const validateForm = () => {
+    const errors = {};
+ 
+    data.form.fields.forEach((inputData) => {
+      const value = formData[inputData.name];
+      validateField(inputData.name, value); 
+      if (errors[inputData.name]) {
+        return false; 
+      }
+    });
+
+    return true; 
+  };
 
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
-        {data.form.fields.map((inputData, index) => {
-          // console.log("inputData", inputData);
-          return (
-            <div key={index}>
-              <label>{inputData.label}</label>
-              {inputData.html_element === "select" ? (
-                <select
+        {data.form.fields.map((inputData, index) => (
+          <div key={index}>
+            <label>{inputData.label}</label>
+            {inputData.html_element === "select" ? (
+              <select
                 className="form-select"
-                  name={inputData.name}
-                  required={inputData.required}
-                  datatype={inputData.data_type}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select an option</option>
-                  {inputData.options.map((option, optionIndex) => (
-                    <option key={optionIndex} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              ) 
-              :  (
-                <input
+                name={inputData.name}
+                required={inputData.required}
+                datatype={inputData.data_type}
+                onChange={handleInputChange}
+                onBlur={(e) => handleBlur(inputData.name, e.target.value)}
+              >
+                <option value="">Select an option</option>
+                {inputData.options.map((option, optionIndex) => (
+                  <option key={optionIndex} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
                 className="form-input"
-                  type={inputData.html_element}
-                  name={inputData.name}
-                  required={inputData.required}
-                  datatype={inputData.data_type}
-                  onChange={handleInputChange}
-                />
-              )}
-                {formErrors[inputData.name] && (
+                type={inputData.html_element}
+                name={inputData.name}
+                required={inputData.required}
+                datatype={inputData.data_type}
+                onChange={handleInputChange}
+                onBlur={(e) => handleBlur(inputData.name, e.target.value)}
+              />
+            )}
+            {formErrors[inputData.name] && (
               <div className="error-message">{formErrors[inputData.name]}</div>
             )}
-            </div>
-          );
-        })}
-        <button className="form-button" type="submit">Submit</button>
+          </div>
+        ))}
+        <button className="form-button" type="submit">
+          Submit
+        </button>
       </form>
     </div>
   );
