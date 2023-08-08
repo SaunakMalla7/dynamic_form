@@ -52,7 +52,7 @@ const data = {
 function Form() {
   const [formData, setFormData] = useState({});
   const [formErrors, setFormErrors] = useState({});
-
+  
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -61,11 +61,48 @@ function Form() {
     setFormData((prevData) => ({ ...prevData, [name]: fieldValue }));
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    data.form.fields.forEach((inputData) => {
+      const value = formData[inputData.name];
+
+      if (inputData.required && !value) {
+        errors[inputData.name] = `${inputData.label} is required`;
+      }
+
+      if (inputData.data_type === "Integer") {
+        const numValue = parseInt(value, 10);
+
+        if (isNaN(numValue)) {
+          errors[inputData.name] = `${inputData.label} must be a valid number`;
+        } else {
+          if (numValue < 18) {
+            errors[inputData.name] = `${inputData.label} should be at least 18`;
+          }
+
+          if (numValue > 100) {
+            errors[inputData.name] = `${inputData.label} should not exceed 100`;
+          }
+        }
+      }
+    });
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Submitted Data:", formData );
+
+    if (validateForm()) {
+      console.log("Submitted Data:", formData);
+    } else {
+      console.log("Form contains errors");
+    }
   };
+
+
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
