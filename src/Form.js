@@ -100,6 +100,11 @@ function Form() {
           }
         }
       }
+       if (inputData.name === "name") {
+        if (value.length < 5 || value.length > 30) {
+          errors[inputData.name] = `${inputData.label} must be between 5 and 30 characters`;
+        }
+      }
     }
 
     setFormErrors(errors);
@@ -109,7 +114,8 @@ function Form() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (validateForm() && formData.age >= 18) {
+    const nameValue = formData["name"];
+    if (validateForm() && formData.age >= 18 && nameValue.length >= 5 && nameValue.length <= 30) {
       console.log("Submitted Data:", formData);
     } else {
       console.log("Form contains errors ");
