@@ -10,6 +10,8 @@ const data = {
         required: true,
         data_type: "String",
         html_element: "text",
+        minLength: 10,
+        maxLength: 30,
       },
       {
         name: "email",
@@ -24,6 +26,8 @@ const data = {
         required: true,
         data_type: "Integer",
         html_element: "number",
+        minLength: 18,
+        maxLength: 100,
       },
       {
         name: "number",
@@ -70,39 +74,31 @@ function Form() {
     validateField(fieldName, value);
   };
 
-  // validation for Form
   const validateField = (fieldName, value) => {
     const errors = { ...formErrors };
-
-    const inputData = data.form.fields.find(
-      (field) => field.name === fieldName
-    );
+    const inputData = data.form.fields.find((field) => field.name === fieldName);
 
     if (inputData) {
       if (inputData.required && !value) {
         errors[inputData.name] = `${inputData.label} is required`;
       } else {
-        errors[inputData.name] = undefined; 
+        errors[inputData.name] = undefined;
       }
 
-      if (inputData.name === "age") {
+      if (inputData.data_type === "Integer") { // Adjusted property name
         const numValue = parseInt(value, 10);
-
         if (isNaN(numValue)) {
           errors[inputData.name] = `${inputData.label} must be a valid number`;
-        } else {
-          if (numValue < 18) {
-            errors[inputData.name] = `${inputData.label} should be at least 18`;
-          }
-
-          if (numValue > 100) {
-            errors[inputData.name] = `${inputData.label} should not exceed 100`;
-          }
+        } else if (numValue < inputData.minLength) { // Use inputData.minLength
+          errors[inputData.name] = `${inputData.label} should be at least ${inputData.minLength}`;
+        } else if (numValue > inputData.maxLength) { // Use inputData.maxLength
+          errors[inputData.name] = `${inputData.label} should not exceed ${inputData.maxLength}`;
         }
       }
-       if (inputData.name === "name") {
-        if (value.length < 5 || value.length > 30) {
-          errors[inputData.name] = `${inputData.label} must be between 5 and 30 characters`;
+
+      if (inputData.data_type === "String") { // Adjusted property name
+        if (value.length < inputData.minLength || value.length > inputData.maxLength) {
+          errors[inputData.name] = `${inputData.label} must be between ${inputData.minLength} and ${inputData.maxLength} characters`;
         }
       }
     }
@@ -110,12 +106,30 @@ function Form() {
     setFormErrors(errors);
   };
 
-  // For Submit
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const nameValue = formData["name"];
-    if (validateForm() && formData.age >= 18 && nameValue.length >= 5 && nameValue.length <= 30) {
+    let isValid = true;
+
+    data.form.fields.forEach((inputData) => {
+      const value = formData[inputData.name];
+      validateField(inputData.name, value);
+
+      if (inputData.name === "age") {
+        const ageValue = parseInt(value, 10);
+        if (ageValue < inputData.minLength || ageValue > inputData.maxLength) {
+          isValid = false;
+        }
+      }
+
+      if (inputData.name === "name") {
+        if (value.length < inputData.minLength || value.length > inputData.maxLength) {
+          isValid = false;
+        }
+      }
+    });
+
+    if (validateForm() && isValid) {
       console.log("Submitted Data:", formData);
     } else {
       console.log("Form contains errors ");
@@ -124,20 +138,20 @@ function Form() {
 
   const validateForm = () => {
     const errors = {};
- 
+
     data.form.fields.forEach((inputData) => {
       const value = formData[inputData.name];
-      validateField(inputData.name, value); 
+      validateField(inputData.name, value);
       if (errors[inputData.name]) {
-        return false; 
+        return false;
       }
     });
-
-    return true; 
+    return true;
   };
-
+  
   return (
     <div className="form-container">
+      <h1>Form</h1>
       <form onSubmit={handleSubmit}>
         {data.form.fields.map((inputData, index) => (
           <div key={index}>
