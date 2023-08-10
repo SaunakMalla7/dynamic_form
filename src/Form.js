@@ -18,7 +18,7 @@ function Form({ data, schema, onSave }) {
   
     
     validateField(fieldName, value);
-    checkShowError();
+    // checkShowError();  
   };
 
 
@@ -70,42 +70,38 @@ function Form({ data, schema, onSave }) {
   };
 
  
-  const checkShowError = () => {
-    const conditions = schema.form.fields.map((inputData) => {
-      const value = formData[inputData.name];
+  // const checkShowError = () => {
+  //   const conditions = schema.form.fields.map((inputData) => {
+  //     const value = formData[inputData.name];
+  //     console.log(`Field: ${inputData.name}, Value: ${value}`);
   
-      if (inputData.data_type === 'Integer') {
-        return !inputData.minLength || !inputData.maxLength ||
-               (value >= inputData.minLength && value <= inputData.maxLength);
-      }
+  //     if (inputData.data_type === 'Integer') {
+  //       const condition = !inputData.minLength || !inputData.maxLength ||
+  //              (value >= inputData.minLength && value <= inputData.maxLength);
+  //              console.log(`Condition (Integer): ${condition}`);
+  //              return condition;
+  //     }
   
-      if (inputData.data_type === 'String') {
-        return !inputData.minLength || !inputData.maxLength ||
-               (value.length >= inputData.minLength && value.length <= inputData.maxLength);
-      }
+  //     if (inputData.data_type === 'String') {
+  //       const condition =  !inputData.minLength || !inputData.maxLength ||
+  //              (value.length >= inputData.minLength && value.length <= inputData.maxLength);
+  //              console.log(`Condition (String): ${condition}`);
+  //              return condition;
+  //     }
   
-      // For other data types or fields without min/max values, assume conditions are met
-      return true;
-    });
+  //     // For other data types or fields without min/max values, assume conditions are met
+  //     return true;
+  //   });
   
-    const allConditionsMet = conditions.every((condition) => condition);
-    setShowError(!allConditionsMet);
-  };
+  //   const allConditionsMet = conditions.every((condition) => condition);
+  //   setShowError(!allConditionsMet);
+  // };
   
-  
-  
-
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    if (!showError) {
       onSave(formData);
-    } else {
-      console.log("Form contains errors or conditions are not met");
-    }
   };
 
-  
 
   return (
     <div className="form-container">
