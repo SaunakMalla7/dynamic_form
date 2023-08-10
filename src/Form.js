@@ -5,7 +5,6 @@ import "./App.css";
 function Form({ data, schema, onSave }) {
   const [formData, setFormData] = useState(data);
   const [formErrors, setFormErrors] = useState({});
-  const [showError, setShowError] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -112,7 +111,6 @@ function Form({ data, schema, onSave }) {
   const handleReset = () => {
     setFormData(data);
     setFormErrors({});
-    setShowError(false);
   };
 
 
@@ -156,9 +154,7 @@ function Form({ data, schema, onSave }) {
             )}
           </div>
         ))}
-         {showError && (
-          <div className="error-message">Please fix errors or meet conditions.</div>
-        )}
+        
         <button className="form-button" type="submit">
           Submit
         </button> 
