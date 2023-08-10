@@ -99,9 +99,16 @@ function Form({ data, schema, onSave }) {
   
   const handleSubmit = (event) => {
     event.preventDefault();
+  
+    const errorCount = Object.values(formErrors).filter(Boolean).length;
+  
+    if (errorCount === 0) {
       onSave(formData);
+    } else {
+      console.log("Form contains errors");
+    }
   };
-
+  
 
   return (
     <div className="form-container">
