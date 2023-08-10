@@ -108,7 +108,13 @@ function Form({ data, schema, onSave }) {
       console.log("Form contains errors");
     }
   };
-  
+
+  const handleReset = () => {
+    setFormData(data);
+    setFormErrors({});
+    setShowError(false);
+  };
+
 
   return (
     <div className="form-container">
@@ -156,6 +162,9 @@ function Form({ data, schema, onSave }) {
         <button className="form-button" type="submit">
           Submit
         </button> 
+        <button className="form-button" type="button" onClick={handleReset}>
+            Reset
+          </button>
       </form>
     </div>
   );

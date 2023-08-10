@@ -41,6 +41,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  margin-right: 1rem ;
 }
 
 .error-message {
