@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import "./App.css";
 
 
 function Form({ data, schema, onSave }) {
   const [formData, setFormData] = useState(data);
-  const [formErrors, setFormErrors] = useState( {});
+  const [formErrors, setFormErrors] = useState({});
+  const [showError, setShowError] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -14,7 +15,23 @@ function Form({ data, schema, onSave }) {
   };
 
   const handleBlur = (fieldName, value) => {
+    const ageValue = parseInt(formData.age, 10);
+    const nameValue = formData.name;
+    
+    if (
+      validateForm() &&
+      ageValue >= 18 &&
+      ageValue <= 100 &&
+      nameValue.length >= 5 &&
+      nameValue.length <= 30
+      ) {
+        setShowError(false); 
+    } else {
+      setShowError(true); 
+    }
+    
     validateField(fieldName, value);
+    
   };
 
   const validateField = (fieldName, value) => {
@@ -64,29 +81,8 @@ function Form({ data, schema, onSave }) {
     setFormErrors(errors);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const ageValue = parseInt(formData.age, 10);
-    const nameValue = formData.name;
-
-    if (
-      validateForm() &&
-      ageValue >= 18 &&
-      ageValue <= 100 &&
-      nameValue.length >= 5 &&
-      nameValue.length <= 30
-    ) {
-     
-      onSave(formData);
-    } else {
-      console.log("Form contains errors ");
-    }
-  };
-
   const validateForm = () => {
     const errors = {};
-
     schema.form.fields.forEach((inputData) => {
       const value = formData[inputData.name];
       validateField(inputData.name, value);
@@ -96,6 +92,18 @@ function Form({ data, schema, onSave }) {
     });
     return true;
   };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (!showError) {
+      onSave(formData);
+    } else {
+      console.log("Form contains errors or conditions are not met");
+    }
+  };
+
+  
 
   return (
     <div className="form-container">
@@ -137,9 +145,12 @@ function Form({ data, schema, onSave }) {
             )}
           </div>
         ))}
+         {showError && (
+          <div className="error-message">Please fix errors or meet conditions.</div>
+        )}
         <button className="form-button" type="submit">
           Submit
-        </button>
+        </button> 
       </form>
     </div>
   );
