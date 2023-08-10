@@ -6,8 +6,8 @@ import Forms from './Forms';
 function App() {
   return (
     <div className="App">
-      {/* <Form/> */}
-      <Forms/>
+      <Form/>
+      {/* <Forms/> */}
     </div>
   );
 }

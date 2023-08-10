@@ -17,11 +17,11 @@
     "name": "typicode"
   },
   "data":{
-    "name": "John Doe",
-    "email": "johndoe@example.com",
-    "age": 25,
+    "name": "Saunak Malla",
+    "email": "Saunak@example.com",
+    "age": 22,
     "number": 12345,
     "role": "user",
-    "Condition": true
+    "Condition": false
   }
 }
