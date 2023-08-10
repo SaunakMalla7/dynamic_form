@@ -1,5 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
+
+
+// Define your API endpoint here
+const apiEndpoint = "http://localhost:5000/data";
 
 const data = {
   form: {
@@ -10,8 +14,9 @@ const data = {
         required: true,
         data_type: "String",
         html_element: "text",
-        minLength: 10,
+        minLength: 5,
         maxLength: 30,
+        defaultValue: "John",
       },
       {
         name: "email",
@@ -63,6 +68,26 @@ function Form() {
   const [formData, setFormData] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
+  useEffect(() => {
+    // Fetch data from the API
+    fetch(apiEndpoint)
+      .then((response) => response.json())
+      .then((apiData) => {
+        const defaultData = {};
+
+        data.form.fields.forEach((field) => {
+          defaultData[field.name] = apiData[field.name] || field.defaultValue || "";
+        });
+
+        setFormData(defaultData);
+      })
+      .catch((error) => {
+        console.error("Error fetching data from API:", error);
+      });
+  }, []);
+
+
+
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
     const fieldValue = type === "checkbox" ? checked : value;
@@ -109,27 +134,10 @@ function Form() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    let isValid = true;
+    const ageValue = parseInt(formData.age, 10);
+    const nameValue = formData.name;
 
-    data.form.fields.forEach((inputData) => {
-      const value = formData[inputData.name];
-      validateField(inputData.name, value);
-
-      if (inputData.name === "age") {
-        const ageValue = parseInt(value, 10);
-        if (ageValue < inputData.minLength || ageValue > inputData.maxLength) {
-          isValid = false;
-        }
-      }
-
-      if (inputData.name === "name") {
-        if (value.length < inputData.minLength || value.length > inputData.maxLength) {
-          isValid = false;
-        }
-      }
-    });
-
-    if (validateForm() && isValid) {
+    if (validateForm() && ageValue >= 18 && ageValue <= 100 && nameValue.length >= 5 && nameValue.length <= 30) {
       console.log("Submitted Data:", formData);
     } else {
       console.log("Form contains errors ");
@@ -148,10 +156,9 @@ function Form() {
     });
     return true;
   };
-  
+
   return (
     <div className="form-container">
-      <h1>Form</h1>
       <form onSubmit={handleSubmit}>
         {data.form.fields.map((inputData, index) => (
           <div key={index}>
@@ -161,7 +168,8 @@ function Form() {
                 className="form-select"
                 name={inputData.name}
                 required={inputData.required}
-                datatype={inputData.data_type}
+                data-type={inputData.data_type} 
+                value={formData[inputData.name]} 
                 onChange={handleInputChange}
                 onBlur={(e) => handleBlur(inputData.name, e.target.value)}
               >
@@ -178,7 +186,8 @@ function Form() {
                 type={inputData.html_element}
                 name={inputData.name}
                 required={inputData.required}
-                datatype={inputData.data_type}
+                data-type={inputData.data_type} 
+                value={formData[inputData.name]} 
                 onChange={handleInputChange}
                 onBlur={(e) => handleBlur(inputData.name, e.target.value)}
               />

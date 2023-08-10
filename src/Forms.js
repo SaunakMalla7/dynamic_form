@@ -1,5 +1,9 @@
-// import React, { useState } from "react";
+// import React, { useEffect, useState } from "react";
 // import "./App.css";
+
+
+// // Define your API endpoint here
+// const apiEndpoint = "http://localhost:5000/data";
 
 // const data = {
 //   form: {
@@ -12,6 +16,7 @@
 //         html_element: "text",
 //         minLength: 5,
 //         maxLength: 30,
+//         defaultValue: "John",
 //       },
 //       {
 //         name: "email",
@@ -62,6 +67,26 @@
 // function Forms() {
 //   const [formData, setFormData] = useState({});
 //   const [formErrors, setFormErrors] = useState({});
+
+//   useEffect(() => {
+//     // Fetch data from the API
+//     fetch(apiEndpoint)
+//       .then((response) => response.json())
+//       .then((apiData) => {
+//         const defaultData = {};
+
+//         data.form.fields.forEach((field) => {
+//           defaultData[field.name] = apiData[field.name] || field.defaultValue || "";
+//         });
+
+//         setFormData(defaultData);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching data from API:", error);
+//       });
+//   }, []);
+
+
 
 //   const handleInputChange = (event) => {
 //     const { name, value, type, checked } = event.target;
@@ -143,7 +168,8 @@
 //                 className="form-select"
 //                 name={inputData.name}
 //                 required={inputData.required}
-//                 datatype={inputData.data_type}
+//                 data-type={inputData.data_type} 
+//                 value={formData[inputData.name]} 
 //                 onChange={handleInputChange}
 //                 onBlur={(e) => handleBlur(inputData.name, e.target.value)}
 //               >
@@ -160,7 +186,8 @@
 //                 type={inputData.html_element}
 //                 name={inputData.name}
 //                 required={inputData.required}
-//                 datatype={inputData.data_type}
+//                 data-type={inputData.data_type} 
+//                 value={formData[inputData.name]} 
 //                 onChange={handleInputChange}
 //                 onBlur={(e) => handleBlur(inputData.name, e.target.value)}
 //               />
