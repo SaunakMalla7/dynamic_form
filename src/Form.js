@@ -15,24 +15,12 @@ function Form({ data, schema, onSave }) {
   };
 
   const handleBlur = (fieldName, value) => {
-    const ageValue = parseInt(formData.age, 10);
-    const nameValue = formData.name;
-    
-    if (
-      validateForm() &&
-      ageValue >= 18 &&
-      ageValue <= 100 &&
-      nameValue.length >= 5 &&
-      nameValue.length <= 30
-      ) {
-        setShowError(false); 
-    } else {
-      setShowError(true); 
-    }
+  
     
     validateField(fieldName, value);
-    
+    checkShowError();
   };
+
 
   const validateField = (fieldName, value) => {
     const errors = { ...formErrors };
@@ -81,17 +69,31 @@ function Form({ data, schema, onSave }) {
     setFormErrors(errors);
   };
 
-  const validateForm = () => {
-    const errors = {};
-    schema.form.fields.forEach((inputData) => {
+ 
+  const checkShowError = () => {
+    const conditions = schema.form.fields.map((inputData) => {
       const value = formData[inputData.name];
-      validateField(inputData.name, value);
-      if (errors[inputData.name]) {
-        return false;
+  
+      if (inputData.data_type === 'Integer') {
+        return !inputData.minLength || !inputData.maxLength ||
+               (value >= inputData.minLength && value <= inputData.maxLength);
       }
+  
+      if (inputData.data_type === 'String') {
+        return !inputData.minLength || !inputData.maxLength ||
+               (value.length >= inputData.minLength && value.length <= inputData.maxLength);
+      }
+  
+      // For other data types or fields without min/max values, assume conditions are met
+      return true;
     });
-    return true;
+  
+    const allConditionsMet = conditions.every((condition) => condition);
+    setShowError(!allConditionsMet);
   };
+  
+  
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
